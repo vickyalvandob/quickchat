@@ -3,7 +3,7 @@ import User from "../models/User.js";
 import bcrypt from "bcryptjs"
 import cloudinary from "../lib/cloudinary.js";
 
-export const signup = async () => {
+export const signup = async (req, res) => {
   const {fullName, email, password, bio} = req.body;
 
   try{
@@ -34,7 +34,7 @@ export const signup = async () => {
   }
 }
 
-export const login = async () => {
+export const login = async (req, res) => {
 
   try{
 
@@ -75,7 +75,7 @@ export const updateProfile = async (req, res) => {
 
     const upload = await cloudinary.uploader.upload(profilePic);
 
-    updatedUser = await User.findByIdAndUpdate(userId, {profilePic: upload.secure_url, bio, fullName}. {new:true})
+    updatedUser = await User.findByIdAndUpdate(userId, {profilePic: upload.secure_url, bio, fullName}, {new:true})
   }
 
   res.json({success:true, user:updatedUser})

@@ -3,23 +3,23 @@ import User from "../models/User.js";
 import cloudinary from "../lib/cloudinary.js";
 import { io, userSocketMap } from "../server.js";
 
-export const getUsersForSidebar = async () => {
+export const getUsersForSidebar = async (req, res) => {
   try {
     const userId = req.user._id;
     const filteredUsers = await User.find({_id: {$ne: userId}}).select("-password");
 
-    const unseenMessage = {}
+    const unseenMessages = {}
     const promises = filteredUsers.map(async (user) => {
       const messages = await Message.find({senderId: user._id, receiverId: userId, seen:false})
       if(messages.length > 0){
-        unseenMessage[user._id] = messages.length;
+        unseenMessages[user._id] = messages.length;
       }
     })
     await Promise.all(promises);
     res.json({
       success: true,
       users: filteredUsers,
-      unseenMessage
+      unseenMessages    
     })
   } catch (error) {
     console.log(error.message)
